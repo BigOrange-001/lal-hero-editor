@@ -1,0 +1,6 @@
+# Windows x64, Python 3.12. Qt Widgets only; no browser runtime is required.
+PySide6-Essentials==6.12.0
+PySide6-Addons==6.12.0
+Pillow==13.0.0
+PyInstaller==6.22.3
+tzdata==2026.5
