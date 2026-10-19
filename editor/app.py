@@ -9,7 +9,7 @@ import os
 import sys
 from pathlib import Path
 
-APP_VERSION = "1.1.4"
+APP_VERSION = "1.2.0-dev"
 APP_NAME = "英雄工坊"
 ROOT = Path(__file__).resolve().parents[1]
 

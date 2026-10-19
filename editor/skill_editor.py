@@ -235,12 +235,22 @@ class SkillEditor(QWidget):
         self.native_editor.error.connect(self.error)
         layout.addWidget(self.native_editor)
         self.native_editor.hide()
+        from .effect_editor import EffectEditor
+        self.effect_editor=EffectEditor(catalog,project,self)
+        self.effect_editor.changed.connect(self.mark_changed)
+        self.effect_editor.error.connect(self.error)
+        layout.addWidget(self.effect_editor)
+        self.effect_editor.hide()
 
     def mark_changed(self, *_):
         if not self.loading:
             self.changed.emit()
 
     def bind(self, skill, action_index=0):
+        self.effect_editor.hide()
+        if skill.get('model')=='effect-sequence-v1':
+            self.skill=skill;self.tabs.hide();self.native_editor.hide();self.effect_editor.show();self.effect_editor.bind(skill,action_index)
+            return
         if skill.get('model')=='native-template-v1':
             self.skill=skill;self.tabs.hide();self.native_editor.show();self.native_editor.bind(skill,action_index)
             return
@@ -292,6 +302,8 @@ class SkillEditor(QWidget):
         self.skill['actions'][self.action_index] = action
 
     def flush(self):
+        if self.skill is not None and self.skill.get("model")=="effect-sequence-v1":
+            return self.effect_editor.flush()
         if self.skill is not None and self.skill.get('model')=='native-template-v1':
             return self.native_editor.flush()
         if self.skill is None:
@@ -392,6 +404,8 @@ class SkillEditor(QWidget):
             self.error.emit(str(error))
 
     def move_action(self, old, new):
+        if self.skill is not None and self.skill.get("model")=="effect-sequence-v1":
+            return self.effect_editor.move_action(old,new)
         if self.skill is not None and self.skill.get('model')=='native-template-v1':
             return self.native_editor.move_action(old,new)
         if self.skill is None or old == new or not (0 <= new < len(self.skill['actions'])):
