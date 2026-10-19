@@ -10,6 +10,7 @@ from PySide6.QtWidgets import (QWidget,QVBoxLayout,QFormLayout,QHBoxLayout,QLine
 from .widgets import combo,integer,number,RefCombo
 from .skill_editor import ActionList
 from mod_effects import DEFAULTS, GROWTH_FIELDS
+from mod_schema import ModError
 
 OPERATIONS={'heal':'治疗（攻击＋自身生命）','damage':'伤害','buff':'施加状态／护盾',
             'push':'击退','move':'突进至目标前','summon':'召唤自定义单位'}
@@ -39,14 +40,14 @@ class EffectEditor(QWidget):
         layout=QVBoxLayout(self)
         heading=QLabel('效果序列 · 条件、召唤与面板联动');heading.setObjectName('pageTitle');layout.addWidget(heading)
         form=QFormLayout()
-        self.name=QLineEdit();self.description=QTextEdit();self.description.setMaximumHeight(80)
+        self.id=QLineEdit();self.name=QLineEdit();self.description=QTextEdit();self.description.setMaximumHeight(80)
         self.rank=QTextEdit();self.rank.setMaximumHeight(110)
         self.rank.setToolTip('引用实际参数：{rank:动作索引:5} 攻击倍率，:6 自身生命倍率，:7 增减益比例；flat 显示固定值。升级和动作重排会同步。')
         self.warmup=integer(0,0,100);self.cooldown=integer(1,1,100);self.reach=integer(3000,0,10000)
         self.trigger=combo([('冷却就绪','ready'),('自身缺少指定状态时','absent_buff')])
         self.trigger_buff=combo([(v,k) for k,v in BUFFS.items()],'purify')
         self.maxlevel=integer(10,1,10)
-        for label,field in [('名称',self.name),('普通说明',self.description),('数值联动说明',self.rank),
+        for label,field in [('本地 ID',self.id),('名称',self.name),('普通说明',self.description),('数值联动说明',self.rank),
                             ('准备',self.warmup),('冷却（沿用原版行动机会约定）',self.cooldown),
                             ('默认施放距离',self.reach),('触发条件',self.trigger),('检查状态',self.trigger_buff),('最高技能等级',self.maxlevel)]:form.addRow(label,field)
         layout.addLayout(form)
@@ -81,11 +82,15 @@ class EffectEditor(QWidget):
         self.actions.currentRowChanged.connect(self.select)
         self.actions.moveRequested.connect(self.move_action)
         for widget in [self.name,self.description,self.rank,self.warmup,self.cooldown,self.reach,self.trigger,self.trigger_buff,self.maxlevel,self.kind,self.target,*self.fields.values(),*self.growth.values()]:
-            if hasattr(widget,'currentIndexChanged'):widget.currentIndexChanged.connect(self.edit)
+            if isinstance(widget,RefCombo):widget.currentTextChanged.connect(self.edit)
+            elif hasattr(widget,'currentIndexChanged'):widget.currentIndexChanged.connect(self.edit)
             elif isinstance(widget,QTextEdit):widget.textChanged.connect(self.edit)
             elif isinstance(widget,QLineEdit):widget.textChanged.connect(self.edit)
             elif isinstance(widget,QCheckBox):widget.toggled.connect(self.edit)
             else:widget.valueChanged.connect(self.edit)
+        # Commit IDs through atomic rename on finish, allowing intermediate text.
+        self.id.textChanged.connect(self.identity_changed)
+        self.id.editingFinished.connect(self.edit)
         self.preview_level.valueChanged.connect(self.update_preview)
         self.loading=False
         self.update_fields()
@@ -110,7 +115,7 @@ class EffectEditor(QWidget):
 
     def bind(self,skill,action_index=0):
         self.loading=True;self.skill=skill;self.selected=-1
-        self.name.setText(skill['name']);self.description.setPlainText(skill['description']);self.rank.setPlainText(skill['rankInfoTemplate'])
+        self.id.setText(skill['id']);self.name.setText(skill['name']);self.description.setPlainText(skill['description']);self.rank.setPlainText(skill['rankInfoTemplate'])
         self.warmup.setValue(skill['warmup']);self.cooldown.setValue(skill['cooldown']);self.reach.setValue(skill['range']);self.maxlevel.setValue(skill['maxLevel'])
         self.trigger.setCurrentIndex(self.trigger.findData(skill['trigger']['kind']))
         self.trigger_buff.setCurrentIndex(self.trigger_buff.findData(skill['trigger'].get('buff','purify')))
@@ -149,6 +154,10 @@ class EffectEditor(QWidget):
 
     def flush(self):
         if self.loading or self.skill is None:return
+        identity=self.id.text().strip()
+        if identity != self.skill.get('id'):
+            index=next(i for i,row in enumerate(self.project.rows('skills')) if row is self.skill)
+            self.project.rename('skills',index,identity)
         self.skill.update(name=self.name.text().strip(),description=self.description.toPlainText(),rankInfoTemplate=self.rank.toPlainText(),
                           warmup=self.warmup.value(),cooldown=self.cooldown.value(),range=self.reach.value(),maxLevel=self.maxlevel.value(),
                           trigger={'kind':self.trigger.currentData()})
@@ -162,9 +171,15 @@ class EffectEditor(QWidget):
             if a['type']!='summon':a['unit']=None
             self.skill['actions'][self.selected]=a
 
+    def identity_changed(self,*_):
+        if not self.loading:self.changed.emit()
+
     def edit(self,*_):
         if self.loading:return
-        self.flush();self.update_fields();self.update_preview();self.changed.emit()
+        try:self.flush()
+        except ModError as exc:
+            self.error.emit(str(exc));return
+        self.update_fields();self.update_preview();self.changed.emit()
         if 0<=self.selected<self.actions.count():
             a=self.skill['actions'][self.selected];self.actions.item(self.selected).setText(f"{self.selected} · {OPERATIONS[a['type']]} · {TARGETS[a['target']]}")
 
@@ -181,6 +196,9 @@ class EffectEditor(QWidget):
         self.preview.setText(f'等级 {level} 实际参数说明\n'+re.sub(r'\{(rank|flat):(\d+):(\d+)\}',token,self.skill['rankInfoTemplate']))
 
     def add(self):
+        if self.skill is None:return
+        if len(self.skill['actions']) >= 32:
+            self.error.emit('效果序列最多包含 32 个步骤。');return
         self.flush();self.skill['actions'].append({'type':'heal',**copy.deepcopy(DEFAULTS)})
         self.loading=True;self.rebuild();self.loading=False;self.selected=-1;self.actions.setCurrentRow(len(self.skill['actions'])-1);self.changed.emit()
 

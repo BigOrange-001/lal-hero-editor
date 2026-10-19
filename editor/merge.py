@@ -186,7 +186,12 @@ def merge_packages(paths, catalog=None, name="合并英雄包", author=""):
                 entity["presentation"][key] = rewrite(value, owner)
             entity["progression"]["starUp"] = rewrite(entity["progression"]["starUp"], owner)
         elif kind == "skills":
-            if entity.get('model')!='native-template-v1':
+            if entity.get('model') == 'effect-sequence-v1':
+                for action in entity["actions"]:
+                    for field in ("effect", "unit"):
+                        if field in action:
+                            action[field] = rewrite(action[field], owner)
+            elif entity.get('model') != 'native-template-v1':
                 for action in entity["actions"]:
                     action["effect"] = rewrite(action["effect"], owner)
         else:

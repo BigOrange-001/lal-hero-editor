@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/BigOrange-001/lal-rebuild",
-  "commit": "4d441975e605127a4a050c5536c68bff70928346",
+  "commit": "8878da47c11fd7aa184f1d9f92cc145021f8c470",
   "gameVersion": "1.0.2",
   "engineApi": "1",
   "files": {
@@ -28,7 +28,7 @@
     "server/halo_progression.py": "6c780fc876560040548319730cf11140615fdbfb3e109791c1c6c83b24b8b19b",
     "server/mod_compile.py": "f01d9a1e8c23fd186ea7a28ceb03bf63dd34b9c63ef1624c2ee718516d55fb47",
     "server/mod_native.py": "9d7be9e353beaba8a5fad5d02cbbcdc863b66f683c104622bcbe8e578772a94c",
-    "server/mod_packages.py": "8d2564be8a65007abbbba3d8b8b2ab1d8f3a897963ad1b101b2f5f5d60db0776",
+    "server/mod_packages.py": "9abd1d9d21254aea66df62b757c45c932c159e012a647c53efe405e54135f1e5",
     "server/mod_policy.py": "14f40f588be632fa6e4ccadef2623172e32a67738e3034001712a92dc49adb5a",
     "server/mod_schema.py": "75cf6b081df68149283bbc7e3df808d3357a35b0d9eede88c1f8b48aae904d6c",
     "server/native_ability_parameters.json": "1094c8330c3b372d29f14c4288e6f6618f9ea27d04f7ae6a3ffc860adc22ef83",
@@ -42,16 +42,24 @@
     "server/mod_effects.py": "122c8e7294aaebf7a65b6802b202b9af938a9fd6716294efe8fb06fb7001ecb8",
     "schemas/mod-effect-sequence.schema.json": "175fabffa7b0e268c5df543377df6114ffd895f9bd75e91618b0893940a12b9c"
   },
-  "note": "Offline authoring snapshot from game PR #18, based on merged PR #17. Original directory names preserve imports; no game gateway, client build chain, APK, SWF runtime or player save is included.",
+  "note": "Offline authoring snapshot from merged game PR #18, plus the explicit catalog scan correction listed in localExtension.sharedFixes. No protocol validation is relaxed.",
   "textNormalization": "LF; one inherited extra EOF blank line removed; hashes describe the vendored snapshot",
-  "workingTreeChanges": false,
+  "workingTreeChanges": true,
   "localExtension": {
     "name": "effect-sequence-v1",
-    "status": "game PR #18 pending merge; example manually verified by user on 2026-10-19; automated tests not run",
+    "status": "game PR #18 merged; editor PR #1 review fixes applied; automated tests not run",
     "newCapabilities": [
       "skill.effect-sequence.v1",
       "unit.summon.v1"
     ],
-    "pullRequest": "https://github.com/BigOrange-001/lal-rebuild/pull/18"
+    "pullRequest": "https://github.com/BigOrange-001/lal-rebuild/pull/18",
+    "sharedFixes": [
+      {
+        "file": "server/mod_packages.py",
+        "change": "ModCatalog.scan preserves authored hero unitType instead of forcing hero.",
+        "upstreamStatus": "Not present in game main 8878da47c11fd7aa184f1d9f92cc145021f8c470; follow-up game synchronization required.",
+        "upstreamSha256": "8d2564be8a65007abbbba3d8b8b2ab1d8f3a897963ad1b101b2f5f5d60db0776"
+      }
+    ]
   }
 }

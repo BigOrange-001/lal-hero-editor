@@ -808,6 +808,12 @@ class Project:
                     hero["skills"][key] = reference(hero["skills"][key])
             if isinstance(hero.get("progression"), dict):
                 hero["progression"]["starUp"] = reference(hero["progression"].get("starUp"))
+        for skill in candidate.get("skills", {}).get("skills", []):
+            if not isinstance(skill, dict) or skill.get("model") != "effect-sequence-v1":
+                continue
+            for action in skill.get("actions", []):
+                if isinstance(action, dict) and "unit" in action:
+                    action["unit"] = reference(action["unit"])
         for patch in candidate.get("patches", {}).get("patches", []):
             if not isinstance(patch, dict):
                 continue
