@@ -10,8 +10,8 @@
     "schemas/mod-engine-api-v1.json": "66421b262e0e169c380c2283f2503557a130ecc6e4a119f8833d3d729c175e85",
     "schemas/mod-heroes.schema.json": "fea3a6eec723887aae8c7eaa7fda907481c2962a1a6c1afc6774d1b50390e1ba",
     "schemas/mod-manifest.schema.json": "334bc5442863a864b4c331b93c5de1d1abd722a289456b5d2fbcb9700f923e37",
-    "schemas/mod-native-template.schema.json": "8f9d4ba977533d6cb423cdc1249d3beadcfc23c5915dc6ff3770947eca6c9168",
-    "schemas/mod-patches.schema.json": "08d9291ada8a98c204c72b69afb1b05028e5f8529126b649e4ab9b25960f839f",
+    "schemas/mod-native-template.schema.json": "00820afad6c0ed4f265090f729eb4aea31b4ffc038ff4411f5c9030d3c56cec1",
+    "schemas/mod-patches.schema.json": "ff326aa2b4f9741928c8a98f76fd80fa384f5b35e4ebadfe687ee0085827c454",
     "schemas/mod-skills.schema.json": "ff90930b9900d344b104bf709b1e70ab054b367b4c388177da07676c4b7fc75f",
     "server/adventure_tasks.py": "93871548038192705c5b95a776c31151a58085a42d191b6b3438b0c211307ba0",
     "server/battle_status_effects.py": "9ec728265e577c0f3e1405e79a5e00e0cd202d050783db67d83d10da3b672f75",
@@ -40,7 +40,7 @@
     "server/upstream_skill_priority.py": "f09114418933bca2a18f2262b1e61a9d19e4fb59464a4160cbb2f76d8c6af50b",
     "server/vip_campaign.py": "6ac24f75d88fa9acae6fcec89a855f2f149fcd573e6eb2c4856a853b905dc941",
     "server/mod_effects.py": "122c8e7294aaebf7a65b6802b202b9af938a9fd6716294efe8fb06fb7001ecb8",
-    "schemas/mod-effect-sequence.schema.json": "39e979a496186a572416ca76ac9c601d1901e889e99e6965c196c1c42c5d8a5d"
+    "schemas/mod-effect-sequence.schema.json": "175fabffa7b0e268c5df543377df6114ffd895f9bd75e91618b0893940a12b9c"
   },
   "note": "Offline authoring snapshot from game PR #18, based on merged PR #17. Original directory names preserve imports; no game gateway, client build chain, APK, SWF runtime or player save is included.",
   "textNormalization": "LF; one inherited extra EOF blank line removed; hashes describe the vendored snapshot",
