@@ -186,6 +186,13 @@ def validate_package_references(package,base_document=None):
         values.extend((value,"heroes."+hero["id"]+".presentation."+key) for key,value in hero["presentation"].items() if value is not None)
         if hero["progression"]["starUp"] is not None:values.append((hero["progression"]["starUp"],"heroes."+hero["id"]+".progression.starUp"))
     for skill in package.data.get("skills",{}).get("skills",[]):
+        if skill.get('model')=='effect-sequence-v1':
+            for action in skill['actions']:
+                if action.get('effect') is not None:
+                    values.append((action['effect'],'skills.'+skill['id']+'.actions.effect'))
+                if action.get('unit') is not None:
+                    values.append((action['unit'],'skills.'+skill['id']+'.actions.unit'))
+            continue
         if skill.get('model')=='native-template-v1':
             if base_document is not None:
                 from mod_native import validate_template
@@ -477,7 +484,7 @@ class ModCatalog:
                 row["defaultChannels"].update(pkg.manifest.get("integrationDefaults",{}))
                 for hero in row.get("heroes",[]):
                     hero["identity"]=f"mod:{pkg.package_id}/hero/{hero['id']}/{hero['variant']}"
-                    hero["aid"]=self.allocate_hero(pkg.package_id,hero["id"],hero["variant"],hero["quality"],{"name":hero["name"],"packageName":pkg.manifest["name"],"progression":hero["progression"],"levelCap":hero["levelCap"],"unitType":"hero"})
+                    hero["aid"]=self.allocate_hero(pkg.package_id,hero["id"],hero["variant"],hero["quality"],{"name":hero["name"],"packageName":pkg.manifest["name"],"progression":hero["progression"],"levelCap":hero["levelCap"],"unitType":hero["unitType"]})
                     unavailable,support=Compiler.channel_applicability(hero["quality"])
                     channels={**row["defaultChannels"],**hero.get("integrationDefaults",{})};default_channels=copy.deepcopy(channels)
                     for channel in unavailable:channels[channel]=False

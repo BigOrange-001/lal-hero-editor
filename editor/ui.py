@@ -485,6 +485,7 @@ class MainWindow(QMainWindow):
         add = QPushButton('＋ 技能')
         menu=QMenu(add)
         menu.addAction('从任意原版技能模板创建',lambda:self.run(self.choose_skill_template))
+        menu.addAction('创建条件／召唤效果序列',lambda:self.run(self.add_effect_skill))
         menu.addAction('创建旧版空白动作技能',lambda:self.run(self.add_skill))
         add.setMenu(menu)
         toolbar.addWidget(add)
@@ -885,13 +886,14 @@ class MainWindow(QMainWindow):
         form = form_card('身份与定位', layout)
         fields = {'id': QLineEdit(hero.get('id', '')), 'variant': QLineEdit(hero.get('variant', '')),
                   'name': QLineEdit(hero.get('name', '')),
+                  'unitType':combo([('可持有英雄','hero'),('专用召唤物（不进入获取渠道）','summon')],hero.get('unitType','hero')),
                   'quality': combo([(v, k) for k,v in QUALITY.items()], hero.get('quality', 5)),
                   'signType': combo([('输出', 'attack'), ('坦克', 'tank'), ('辅助', 'assist')], hero.get('signType')),
                   'actionType': combo([('突进 forward', 'forward'), ('迂回 sly', 'sly'), ('站桩 stand', 'stand'), ('诡诈 cunning', 'cunning')], hero.get('actionType')),
                   'damageType': combo([('物理', 'physical'), ('魔法', 'magic'), ('真实伤害', 'true')], hero.get('damageType')),
                   'role': QLineEdit(hero.get('role', ''))}
         names = {'id': '英雄本地 ID *', 'variant': '变体 ID *（品质变体独立）', 'name': '英雄名称 *',
-                 'quality': '品质 *', 'signType': '战斗职责 *', 'actionType': '行动类型 *', 'damageType': '普攻伤害类型 *', 'role': '角色定位说明（选填）'}
+                 'unitType':'单位类型 *（已安装后不可修改）', 'quality': '品质 *', 'signType': '战斗职责 *', 'actionType': '行动类型 *', 'damageType': '普攻伤害类型 *', 'role': '角色定位说明（选填）'}
         fields['damageType'].setToolTip('真实伤害使用原生类型 3：不扣除物防／魔防，沿用原版真实伤害倍率（当前 0.3）及命中、暴击、护盾等后续规则。')
         for quality,color in {6:'#efa64c',5:'#b07be8',4:'#5b9de8',3:'#56b87b',2:'#c8ced7'}.items():
             fields['quality'].setItemData(fields['quality'].findData(quality),QColor(color),Qt.ItemDataRole.ForegroundRole)
@@ -1017,7 +1019,7 @@ class MainWindow(QMainWindow):
                     star_up.set_value('self:hero/'+new_identity+'/'+(new_variant if suffix == old_variant else suffix))
             for key, field in fields.items():
                 hero[key] = field.currentData() if isinstance(field, QComboBox) else field.value() if hasattr(field,'value') else field.text().strip()
-            hero['unitType'] = 'hero'
+            hero['unitType'] = fields['unitType'].currentData()
             hero['description'] = description.toPlainText()
             for (group,key), field in stats.items():
                 hero.setdefault(group, {})[key] = field.value()
@@ -1108,6 +1110,16 @@ class MainWindow(QMainWindow):
         self.current_editor=self.current_flush=None;self.mark_dirty()
         self.refresh_tree(('skills',len(self.project.rows('skills'))-1))
         return row
+
+    def add_effect_skill(self):
+        self.flush()
+        row=self.project.add_skill();identity=row['id'];row.clear()
+        row.update(id=identity,name='新效果序列',description='',model='effect-sequence-v1',
+                   warmup=0,cooldown=1,range=3000,maxLevel=10,trigger={'kind':'ready'},
+                   rankInfoTemplate='恢复 {rank:0:5} 攻击的生命。',
+                   actions=[{'type':'heal','target':'self','attackRatio':1}])
+        self.current_editor=self.current_flush=None
+        self.mark_dirty();self.refresh_tree(('skills',len(self.project.rows('skills'))-1))
 
     def add_skill(self, hero=None, slot=None):
         self.flush()

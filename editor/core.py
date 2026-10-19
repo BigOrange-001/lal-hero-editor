@@ -102,6 +102,10 @@ def _project_shape(manifest, data, metadata):
                         if value is not None and not isinstance(value, str):
                             error(path + "." + key + "." + field_name, "引用必须为文本或空值")
             elif kind == "skills":
+                if row.get('model')=='effect-sequence-v1':
+                    object_value(row.get('trigger',{}),path+'.trigger')
+                    rows_value(row,'actions',path)
+                    continue
                 if row.get('model')=='native-template-v1':
                     object_value(row.get('nativeTemplate'),path+'.nativeTemplate')
                     object_value(row['nativeTemplate'].get('settings'),path+'.nativeTemplate.settings')
@@ -804,6 +808,12 @@ class Project:
                     hero["skills"][key] = reference(hero["skills"][key])
             if isinstance(hero.get("progression"), dict):
                 hero["progression"]["starUp"] = reference(hero["progression"].get("starUp"))
+        for skill in candidate.get("skills", {}).get("skills", []):
+            if not isinstance(skill, dict) or skill.get("model") != "effect-sequence-v1":
+                continue
+            for action in skill.get("actions", []):
+                if isinstance(action, dict) and "unit" in action:
+                    action["unit"] = reference(action["unit"])
         for patch in candidate.get("patches", {}).get("patches", []):
             if not isinstance(patch, dict):
                 continue
@@ -1052,6 +1062,8 @@ class Project:
             caps.update(("hero.register", "progression.default-player-hero"))
         if any(hero.get('damageType')=='true' for hero in data.get('heroes',{}).get('heroes',[])):
             caps.add('hero.damage.true')
+        if any(hero.get('unitType')=='summon' for hero in data.get('heroes',{}).get('heroes',[])):
+            caps.add('unit.summon.v1')
         for patch in data.get("patches", {}).get("patches", []):
             for op in patch.get("operations", []):
                 path = op.get("path", "")
@@ -1061,7 +1073,7 @@ class Project:
                 caps.add("patch.scopes")
         for skill in data.get("skills", {}).get("skills", []):
             caps.update(skill_extension_capabilities(skill))
-            if skill.get('model')=='native-template-v1':continue
+            if skill.get('model') in ('native-template-v1','effect-sequence-v1'):continue
             for action in skill.get("actions", []):
                 if isinstance(action, dict) and isinstance(action.get("type"), str):
                     caps.add("skill." + action["type"])
