@@ -2,7 +2,7 @@
 
 生成来源：当前仓库实际配置与客户端复合机制参数契约。运行 `python -B scripts/generate_battle_editor_catalog.py` 更新。
 
-当前 **1077 条技能全部可导入编辑器完整模板**；包含 **73 种原生动作、44 类复合机制、324 个复合机制可调参数**。这些是技能条目数，包含品质变体，不是去重后的英雄技能数。
+当前 **1207 条技能全部可导入编辑器完整模板**；包含 **83 种原生动作、52 类复合机制、324 个复合机制可调参数**。这些是技能条目数，包含品质变体，不是去重后的英雄技能数。
 
 ## 从游戏逻辑到编辑器
 
@@ -24,24 +24,30 @@
 | 类型 | 编辑器名称 | 参数 | 使用条目数 | 示例来源 |
 | --- | --- | --- | ---: | --- |
 | `armor` | 护甲 | 倍率、持续回合、视觉特效 | 2 | 终极爆弹 · `S_631053_5` |
-| `attrup` | 属性提升 | 倍率、属性、固定属性值、持续回合、视觉特效 | 32 | 星之灌注 · `S_203004_2` |
+| `attrup` | 属性提升 | 倍率、属性、固定属性值、持续回合、视觉特效 | 50 | 星之灌注 · `S_203004_2` |
 | `back` | 反击 | 倍率、持续回合、视觉特效 | 3 | 真地动山崩 · `S_631090_4` |
 | `battle_stack` | 战斗叠层 | 属性、每层数值、最大层数、增量层数、触发条件、视觉特效 | 5 | 秘术射击 · `S_621021_4` |
 | `battle_stack_unconditional` | 无条件战斗叠层 | 属性、每层数值、最大层数、视觉特效 | 2 | 灼热火球 · `S_621029_5` |
 | `bless` | 祝福 | 持续回合、视觉特效 | 12 | 忠犬护主 · `S_402024_6` |
+| `book_bonus` | 穿甲状态 | 属性比例、增益属性、持续回合 | 6 | 裂甲之书-白 · `S_96504_2` |
+| `book_burn` | 技能书灼烧 | 灼烧总攻击倍率、持续回合、视觉特效 | 3 | 火焰之书-绿 · `S_96505_3` |
+| `book_passive` | 技能书事件被动 | 属性比例、被动属性 | 58 | 力量符印-白 · `S_96001_2` |
 | `burn` | 灼烧 | 倍率、持续回合、视觉特效 | 18 | 焚烧 · `S_201221_5` |
+| `caster_ap_shield` | 按施法者攻击生成护盾 | 施法者攻击护盾倍率、持续回合、视觉特效 | 7 | 绝境逢生 · `S_401311_5` |
+| `caster_hp_heal` | 纯最大生命治疗 | 施法者最大生命治疗比例、视觉特效 | 2 | 超赛变身 · `S_201311_5` |
 | `caster_hp_shield` | 施法者生命护盾 | 倍率、持续回合、视觉特效 | 3 | 均衡守护 · `S_631018_3` |
+| `cat_passive` | 击杀连锁攻击（事件被动） | 实际攻击真伤倍率、每次触发攻击次数、每全局回合触发上限 | 2 | 连环猎杀 · `S_471129_5` |
 | `clone_normal` | 普通技能分身 | 视觉特效 | 2 | 影奥义·灭魂劫 · `S_631132_5` |
 | `combo` | 连击 | 每段倍率、伤害类型、连击次数、视觉特效 | 22 | 弹射匕首 · `S_201129_5` |
 | `conditional_damage` | 条件伤害 | 基础倍率、伤害类型、触发条件、条件附加倍率、视觉特效 | 10 | 回旋冲击 · `S_621026_5` |
 | `cure` | 治疗 | 参数 1、视觉特效 | 71 | 能量和弦 · `S_201228_5` |
-| `curse` | 诅咒 | 持续回合、视觉特效 | 1 | 雷霆万钧 · `S_201226_6` |
-| `damage` | 伤害 | 伤害倍率、伤害类型、视觉特效 | 500 | 德玛西亚正义 · `S_201001_3` |
+| `curse` | 诅咒 | 持续回合、视觉特效 | 3 | 雷霆万钧 · `S_201226_6` |
+| `damage` | 伤害 | 伤害倍率、伤害类型、视觉特效 | 506 | 德玛西亚正义 · `S_201001_3` |
 | `damage_chain` | 链式伤害 | 连锁段数、分段倍率、伤害类型、传播距离、最大目标数、传播策略、附加倍率、状态标记、附加参数、开关、视觉特效 | 4 | 枪林弹雨 · `S_621030_5` |
-| `dash` | 冲刺 | 位移距离、视觉特效 | 21 | 德玛西亚斩击 · `S_201001_2` |
+| `dash` | 冲刺 | 位移距离、视觉特效 | 22 | 德玛西亚斩击 · `S_201001_2` |
 | `dash_group_strike` | 突进群攻 | 伤害倍率、伤害类型、恢复比例、视觉特效 | 2 | 先锋之刃 · `S_631024_5` |
-| `dispel_good` | 驱散增益 | 视觉特效 | 2 | 能量倾泻 · `S_631126_5` |
-| `evil` | 邪恶 | 伤害倍率、伤害类型、持续回合、视觉特效 | 4 | 万魂诅咒 · `S_631074_5` |
+| `dispel_good` | 驱散增益 | 视觉特效 | 4 | 毁灭一击 · `S_621137_5` |
+| `evil` | 邪恶 | 伤害倍率、伤害类型、持续回合、视觉特效 | 2 | 万魂诅咒 · `S_631074_5` |
 | `fleeup` | 闪避提升 | 倍率、持续回合、视觉特效 | 7 | 夜行追猎 · `S_401206_4` |
 | `focus_fire` | 集火 | 视觉特效 | 3 | 厄运钟摆 · `S_621032_4` |
 | `heal_ap` | 按攻击治疗 | 治疗倍率、视觉特效 | 4 | 三段突刺 · `S_201009_2` |
@@ -56,46 +62,50 @@
 | `locked_combo_weak` | 连击附加虚弱 | 每段倍率、伤害类型、连击次数、附加虚弱比例、持续回合、视觉特效 | 6 | 金箍连击 · `S_22551005_2` |
 | `locked_sequence` | 锁定连段 | 连段次数、第 1 段伤害倍率、第 2 段伤害倍率、第 3 段伤害倍率、伤害类型、恢复比例、视觉特效 | 16 | 三段突刺 · `S_201009_2` |
 | `locked_sequence_area` | 锁定连段范围攻击 | 连段次数、第 1 段伤害倍率、第 2 段伤害倍率、第 3 段伤害倍率、第 4 段伤害倍率、伤害类型、恢复比例、范围半径、最多目标数、视觉特效 | 18 | 符文禁锢 · `S_303003_2` |
-| `manual_ability` | 原生复合机制 | 复合机制、等级倍率、视觉特效 | 110 | 真假猴王 · `S_641005_2` |
+| `manual_ability` | 原生复合机制 | 复合机制、等级倍率、特效、精准固定值、群体真伤攻击倍率、主目标追加真伤倍率、实际扣血恢复比例 | 126 | 猫影突袭 · `S_271129_5` |
 | `manual_dot` | 持续伤害 | 持续伤害类型、每次攻击倍率、最大生命比例、持续回合、伤害类型、刷新标记、视觉特效 | 16 | 旋斧回旋 · `S_621019_4` |
 | `move_enemy_side_target` | 移至敌人侧面 | 目标策略、落点间距、视觉特效 | 2 | 欺诈突袭 · `S_621128_5` |
 | `move_self` | 自身位移 | 位移距离、视觉特效 | 25 | 幻影魔弹 · `S_621127_5` |
 | `move_to_ally` | 移动至友军 | 视觉特效 | 3 | 均衡守护 · `S_631018_3` |
 | `move_to_target` | 移动至敌人 | 目标策略、最大移动距离、视觉特效 | 14 | 德玛西亚正义 · `S_201001_3` |
-| `move_to_target_lane` | 换路并突进 | 目标策略、最大移动距离、落点间距、视觉特效 | 69 | 贯日长矛 · `S_621017_3` |
+| `move_to_target_lane` | 换路并突进 | 目标策略、最大移动距离、落点间距、视觉特效 | 67 | 贯日长矛 · `S_621017_3` |
 | `normal_on_hero_kill` | 击杀英雄追加普攻 | 击杀来源动作列表、视觉特效 | 2 | 狩猎追击 · `S_631135_5` |
+| `nurse_healing` | 实际治疗与过量治疗反击（事件被动） | 实际恢复反击比例、过量治疗反击比例 | 2 | 医者反击 · `S_471208_5` |
 | `pending_area_strike` | 延后范围打击 | 中心来源动作、伤害倍率、伤害类型、半径、最大目标数、延后回合、视觉特效 | 3 | 深海爆裂 · `S_631052_4` |
 | `poison` | 中毒 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 32 | 毒性射击 · `S_201209_4` |
+| `polar_basic` | 普攻回合叠层追击（事件被动） | 每层追击物理倍率、叠层上限 | 2 | 极地追击 · `S_471202_5` |
 | `pull` | 拉近 | 伤害倍率、伤害类型、拉近距离、视觉特效 | 14 | 机械飞爪 · `S_201204_4` |
-| `pull_group` | 群体拉近 | 伤害倍率、伤害类型、拉近距离、落点间距、视觉特效 | 9 | 旋斧回旋 · `S_621019_4` |
-| `purify` | 净化 | 参数 1、视觉特效 | 75 | 反击风暴 · `S_201008_2` |
+| `pull_group` | 群体拉近 | 伤害倍率、伤害类型、拉近距离、落点间距、视觉特效 | 7 | 旋斧回旋 · `S_621019_4` |
+| `purify` | 净化 | 参数 1、视觉特效 | 83 | 反击风暴 · `S_201008_2` |
 | `push` | 击退 | 伤害倍率、伤害类型、击退距离、视觉特效 | 32 | 酒桶震击 · `S_202106_4` |
-| `push_aoe` | 范围击退 | 影响距离、击退距离、视觉特效 | 29 | 雷霆万钧 · `S_201226_6` |
+| `push_aoe` | 范围击退 | 影响距离、击退距离、视觉特效 | 31 | 雷霆万钧 · `S_201226_6` |
 | `recast_on_kill` | 击杀重施 | 击杀来源动作、最多重施次数、仅英雄击杀、排除召唤物、视觉特效 | 4 | 利刃冲锋 · `S_621024_5` |
 | `ricochet_bursts` | 弹射连发 | 发射次数、弹射倍率列表、弹射半径、伤害类型、视觉特效 | 3 | 弹射刃雨 · `S_631078_4` |
-| `select_target` | 选定目标 | 视觉特效 | 20 | 万能牌 · `S_621096_5` |
-| `shield` | 攻击护盾 | 倍率、持续回合、视觉特效 | 60 | 守护屏障 · `S_202018_3` |
+| `santa_kill` | 击杀永久攻击叠层（事件被动） | 每次击杀攻击层数、每次击杀累计次数、每层永久攻击比例 | 2 | 邪恶圣诞礼物 · `S_471217_5` |
+| `select_target` | 选定目标 | 视觉特效 | 22 | 万能牌 · `S_621096_5` |
+| `shield` | 攻击护盾 | 倍率、持续回合、视觉特效 | 59 | 守护屏障 · `S_202018_3` |
 | `shield_composite` | 复合护盾 | 攻击与生命混合倍率、双抗倍率、持续回合、视觉特效 | 3 | 幽冥壁垒 · `S_631032_4` |
 | `shield_dispel` | 驱散护盾 | 影响距离、视觉特效 | 3 | 静电禁锢 · `S_302013_3` |
 | `shield_followup` | 护盾后续结算 | 生命护盾比例、持续回合、后续伤害倍率、目标来源动作、伤害类型、视觉特效 | 6 | 反击风暴 · `S_201008_2` |
-| `silence` | 沉默 | 伤害倍率、伤害类型、持续回合、视觉特效 | 32 | 德玛西亚斩击 · `S_201001_2` |
-| `stat_flat` | 固定属性 | 属性、固定数值、持续回合、视觉特效 | 55 | 钢铁冲击 · `S_201310_5` |
-| `steel` | 双抗提升 | 倍率、持续回合、视觉特效 | 70 | 瞬步斩 · `S_205010_3` |
-| `strong` | 强化 | 倍率、持续回合、视觉特效 | 93 | 德邦军旗 · `S_201007_2` |
-| `stun` | 眩晕 | 伤害倍率、伤害类型、持续回合、视觉特效 | 167 | 德邦军旗 · `S_201007_2` |
+| `silence` | 沉默 | 伤害倍率、伤害类型、持续回合、视觉特效 | 33 | 德玛西亚斩击 · `S_201001_2` |
+| `stat_flat` | 固定属性 | 属性、固定数值、持续回合、视觉特效 | 59 | 钢铁冲击 · `S_201310_5` |
+| `steel` | 双抗提升 | 倍率、持续回合、视觉特效 | 72 | 瞬步斩 · `S_205010_3` |
+| `strong` | 强化 | 倍率、持续回合、视觉特效 | 95 | 德邦军旗 · `S_201007_2` |
+| `stun` | 眩晕 | 伤害倍率、伤害类型、持续回合、视觉特效 | 170 | 德邦军旗 · `S_201007_2` |
 | `stun_by_condition` | 条件眩晕 | 伤害倍率、伤害类型、基础眩晕回合、触发条件、附加眩晕回合、视觉特效 | 4 | 日炎裁决 · `S_631020_4` |
-| `suck` | 吸血 | 伤害倍率、伤害类型、吸血比例、视觉特效 | 26 | 旋斧回旋 · `S_201019_4` |
+| `suck` | 吸血 | 伤害倍率、伤害类型、吸血比例、视觉特效 | 28 | 旋斧回旋 · `S_201019_4` |
 | `summon` | 召唤 | 面板倍率、召唤单位、存续回合、视觉特效 | 43 | 荆棘助手 · `S_2061205_5` |
 | `summon_turret` | 召唤炮台 | 面板倍率、召唤单位、存续回合、原生参数4、原生参数5、原生参数6、数量参数、原生参数8、原生参数9、视觉特效 | 6 | 微型炮台 · `S_203014_3` |
 | `sunder` | 破甲 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 5 | 影刃斩 · `S_621132_5` |
 | `sunder_percent` | 百分比破甲 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 29 | 火箭铁拳 · `S_202013_3` |
 | `target_hp_shield` | 目标生命护盾 | 倍率、持续回合、视觉特效 | 2 | 奇思妙想 · `S_631045_5` |
 | `taunt` | 嘲讽 | 持续回合、视觉特效 | 15 | 忠犬护主 · `S_402024_6` |
+| `timed_bless` | 限时神佑 | 持续回合、视觉特效 | 6 | 超赛变身 · `S_201311_5` |
 | `timed_stack` | 定时叠层 | 属性、每层数值、最大层数、持续回合、视觉特效 | 2 | 虚空行走 · `S_631134_5` |
-| `true_damage` | 真实伤害 | 真实伤害倍率、视觉特效 | 10 | 德玛西亚审判 · `S_301001_3` |
+| `true_damage` | 真实伤害 | 真实伤害倍率、视觉特效 | 13 | 德玛西亚审判 · `S_301001_3` |
 | `trynd_undying` | 不死状态 | 持续回合 | 2 | 无尽怒火 · `S_301028_5` |
 | `weak` | 虚弱 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 26 | 寒霜箭 · `S_201202_5` |
-| `weak_percent` | 百分比虚弱 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 46 | 火箭铁拳 · `S_202013_3` |
+| `weak_percent` | 百分比虚弱 | 伤害倍率、伤害类型、附加比例、持续回合、视觉特效 | 44 | 火箭铁拳 · `S_202013_3` |
 
 `hitup` / `fleeup` 保留原版历史动作数据；当前执行器没有对应增益执行分支。模板导入保持原有行为，名称不代表新增了实际增益算法。
 
@@ -149,12 +159,20 @@
 | `kaelthas_n` | 活体炸弹、活体炸弹 | 5 | 目标距离 · 0、伤害倍率 · 2、伤害类型 · 3 |
 | `kaelthas_c` | 烈焰风暴、烈焰风暴 | 6 | 目标距离 · 0、目标距离 · 2、最多目标数 · 3 |
 | `aoxing_n` | 连锁闪电、连锁闪电 | 9 | 目标距离 · 0、连段 / 循环次数 · 3、目标距离 · 6 |
+| `cat_n` | 猫影突袭、猫影突袭 | 0 |  |
+| `cat_c` | 死亡莲华·真、死亡莲华·真 | 0 |  |
+| `polar_n` | 极地齐射、极地齐射 | 0 |  |
+| `polar_c` | 极地魔法水晶箭、极地魔法水晶箭 | 0 |  |
+| `santa_n` | 圣诞黑暗祭祀、圣诞黑暗祭祀 | 0 |  |
+| `santa_c` | 圣诞终焉、圣诞终焉 | 0 |  |
+| `nurse_n` | 全队急救、全队急救 | 0 |  |
+| `nurse_c` | 重症守护、重症守护 | 0 |  |
 
 完整参数契约见 [native_ability_parameters.json](../server/native_ability_parameters.json)。
 
 ## 选敌、条件与关联
 
-已安装选敌策略：`ally_all`、`ally_all_lowest_hp_ratio`、`ally_lane_all`、`ally_lane_highest_attack_any`、`ally_lane_lowest_current_hp_any`、`ally_lane_lowest_current_hp_hero`、`ally_lane_lowest_hp_ratio_any`、`ally_lane_lowest_hp_ratio_hero`、`ally_lane_lowest_hp_ratio_heroes`、`ally_lane_lowest_hp_ratio_n`、`ally_self`、`enemy_adaptive_route_lowest_hp_ratio_hero`、`enemy_global_highest_attack_hero`、`enemy_global_highest_hpmax_hero`、`enemy_global_lowest_current_hp`、`enemy_global_lowest_hp_ratio_hero`、`enemy_global_lowest_hpmax`、`enemy_lane_all`、`enemy_lane_all_in_radius`、`enemy_lane_around_primary_300`、`enemy_lane_behind_primary`、`enemy_lane_behind_primary_nearest`、`enemy_lane_farthest`、`enemy_lane_frontmost`、`enemy_lane_highest_attack_hero`、`enemy_lane_highest_attack_hero_fallback_any`、`enemy_lane_lowest_current_hp_hero`、`enemy_lane_lowest_hp_ratio_any`、`enemy_lane_lowest_hp_ratio_hero_fallback_any`、`enemy_lane_lowest_hp_ratio_n`、`enemy_lane_nearest_neighbor`、`enemy_lane_stunned_hero_fallback_any`。
+已安装选敌策略：`ally_all`、`ally_all_lowest_hp_ratio`、`ally_lane_all`、`ally_lane_highest_attack_any`、`ally_lane_lowest_current_hp_any`、`ally_lane_lowest_current_hp_hero`、`ally_lane_lowest_hp_ratio_any`、`ally_lane_lowest_hp_ratio_hero`、`ally_lane_lowest_hp_ratio_heroes`、`ally_lane_lowest_hp_ratio_n`、`ally_self`、`enemy_adaptive_route_lowest_hp_ratio_hero`、`enemy_all`、`enemy_global_highest_attack_hero`、`enemy_global_highest_hpmax_hero`、`enemy_global_lowest_current_hp`、`enemy_global_lowest_hp_ratio_hero`、`enemy_global_lowest_hpmax`、`enemy_lane_all`、`enemy_lane_all_in_radius`、`enemy_lane_around_primary_300`、`enemy_lane_behind_primary`、`enemy_lane_behind_primary_nearest`、`enemy_lane_farthest`、`enemy_lane_frontmost`、`enemy_lane_highest_attack_hero`、`enemy_lane_highest_attack_hero_fallback_any`、`enemy_lane_lowest_current_hp_hero`、`enemy_lane_lowest_hp_ratio_any`、`enemy_lane_lowest_hp_ratio_hero_fallback_any`、`enemy_lane_lowest_hp_ratio_n`、`enemy_lane_nearest_neighbor`、`enemy_lane_stunned_hero_fallback_any`。
 
 条件字符串按已有原生动作提供，包括施放前持续伤害、灼烧、流血、生命阈值、主目标及击杀链条件。条件的执行语义由对应原生动作决定，不能把一种动作的条件任意套到另一种动作。分路筛选提供 `all/same_as_caster/same_as_center`，排序支持原生 `nearest`。
 
@@ -166,12 +184,12 @@
 
 模板的 `source/sourceDigest` 指向不可变原版机制来源，包内 `id` 是自制技能身份。编译器生成私有运行 ID，并另外写入受校验的机制来源标识；不能依靠改名绕过角色专属派发。来源变动需要重新导入审核，合包不会改变机制来源。
 
-新格式需要 `skill.native-template.v1`，客户端在请求中声明支持。服务端检查激活、登录及玩法请求；仅升级编辑器不能让旧客户端执行新格式。原有命名字段的 16 动作格式继续兼容。
+原生模板需要 `skill.native-template.v1`；1.0.3 机制与限时神佑条件需要 `skill.native-template.103`；通用事件被动需要 `skill.events.v1`。客户端在请求中声明支持。服务端检查激活、登录及玩法请求；仅升级编辑器不能让旧客户端执行新格式。原有命名字段的 16 动作格式继续兼容。
 
 校验覆盖已知动作与形状、有限数值、参数范围、资源与单位引用、来源摘要、动作关联、成长路径和召唤策略。所有包仍经过相同的配额、依赖与冲突校验，不提供 AS3/SWF/eval 或外部代码加载。
 
 ## 验证范围
 
-核心检查见 `scripts/check_native_templates.py`：全量往返、逐技能编辑、合法重排、五批真实包导入导出、合包、坏契约拒绝及实际 Qt 控件编辑保存。客户端改动仅进行增量编译检查；未启动游戏、未进行实战验证、未构建 APK/AIR。
+核心检查见 `scripts/check_native_templates.py`：全量往返、逐技能编辑、合法重排、五批真实包导入导出、合包、坏契约拒绝及实际 Qt 控件编辑保存。本次 1.0.3 更新与审查修复按用户要求不运行上述检查、客户端编译、游戏实战或 APK/AIR 打包。目录由配置生成，列出覆盖范围并不表示通过运行测试。
 
 格式与操作见 [作者规范](mod-authoring.md)、[使用指南](hero-pack-editor-guide.md)、[Schema](../schemas/mod-native-template.schema.json)。

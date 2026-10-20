@@ -27,7 +27,11 @@ def load_base(path):
     from battle_status_effects import apply_battle_status_effects
     from halo_progression import apply_halo_progression
     for apply in (apply_recruit_exchange_config,apply_equipment_capacity,apply_equipment_upgrade_config,apply_captain_timing,apply_upstream_skill_priority,apply_battle_status_effects):apply(document)
-    return apply_halo_progression(document)
+    document=apply_halo_progression(document)
+    from mod_authoring_103 import apply_mod_authoring_103
+    apply_mod_authoring_103(document)
+    document['cfg_version']=(ROOT/'GAME_VERSION').read_text(encoding='utf-8').strip()
+    return document
 
 def pack_directory(directory,output):
     directory=Path(directory).resolve();output=Path(output).resolve()

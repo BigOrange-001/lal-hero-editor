@@ -8,7 +8,7 @@ from PySide6.QtWidgets import (QWidget,QVBoxLayout,QHBoxLayout,QFormLayout,QLabe
     QInputDialog,QTabWidget,QScrollArea,QGroupBox,QMessageBox)
 from .widgets import number, integer, combo, RefCombo
 from .skill_editor import ActionList
-from mod_native import PARALLEL, OP_LABELS, NODE_SETTINGS, argument_label, reorder_actions, remove_action, ability_contract, ability_defaults
+from mod_native import BOOK_PASSIVE_STATS, BOOK_BONUS_STATS, PARALLEL, OP_LABELS, NODE_SETTINGS, argument_label, reorder_actions, remove_action, ability_contract, ability_defaults
 from mod_schema import digest
 
 LABELS={
@@ -130,6 +130,8 @@ class ValueTree(QWidget):
         elif self.kind and len(path)==2 and path[0]=='arguments' and argument_label(self.kind,int(path[-1])+1,self.data['arguments'])=='触发条件':
             result=sorted({a[int(path[-1])+1] for r in self.catalog.skills for a in r['actions']
                            if a[0]==self.kind and len(a)>int(path[-1])+1 and isinstance(a[int(path[-1])+1],str)})
+        elif self.kind in ('book_passive','book_bonus') and path==('arguments',1):
+            result=list(BOOK_PASSIVE_STATS if self.kind=='book_passive' else BOOK_BONUS_STATS)
         elif value.startswith(('FX','E_')) or ('arguments' in path and self.kind and path[-1]==len(self.data['arguments'])-1):
             result=list(self.catalog.cfg.get('effect',{}))
         elif value.startswith('A_'):result=list(self.catalog.cfg.get('avatar',{}))
