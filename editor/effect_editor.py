@@ -21,6 +21,7 @@ TARGETS={'self':'自身','all_allies':'全体友军','all_enemies':'全体敌人
 BUFFS={'shield':'护盾','purify':'净化','strong':'攻击提升','weak':'虚弱',
        'sunder':'破甲','steel':'双防提升','bless':'永久神佑','timed_bless':'限时神佑','curse':'诅咒','critup':'暴击',
        'toughup':'韧性','fleeup':'闪避','hitup':'精准／命中','stun':'眩晕'}
+CONDITION_LABELS={**BUFFS,'root':'定身','poison':'中毒','burn':'灼烧','evil':'邪恶','silence':'沉默','taunt':'嘲讽','armor':'护甲提升','book_penetration':'穿甲状态'}
 FIELDS={'eventRatio':'事件实际数值倍率','overhealRatio':'事件过量治疗倍率','centerAction':'中心／锁定动作（从 0 起；-1 自身）','radius':'范围半径（本路）',
         'attackRatio':'攻击面板倍率','maxHpRatio':'自身最大生命倍率','amount':'增减益比例／固定属性',
         'buff':'状态','duration':'状态持续目标行动回合','distance':'击退距离／突进距离上限（0 不限）',
@@ -45,7 +46,7 @@ class EffectEditor(QWidget):
         self.rank.setToolTip('引用实际参数：{rank:动作索引:5} 攻击倍率，:6 自身生命倍率，:7 增减益比例；flat 显示固定值。升级和动作重排会同步。')
         self.warmup=integer(0,0,100);self.cooldown=integer(1,0,100);self.cooldown.setToolTip('事件被动允许 0；其他技能至少为 1。事件冷却按自身行动机会计数。');self.reach=integer(3000,0,10000)
         self.trigger=combo([('冷却就绪','ready'),('自身缺少指定状态时','absent_buff'),('事件发生时（被动槽）','event')])
-        self.trigger_buff=combo([(v,k) for k,v in BUFFS.items()],'purify')
+        self.trigger_buff=combo([(v,k) for k,v in CONDITION_LABELS.items()],'purify')
         event_labels={'turn_start':'自身回合开始','turn_end':'自身回合结束','basic_attack':'完成普攻（包括未命中）',
                       'skill_cast':'完成主动施法','hit':'攻击命中','crit':'攻击暴击','miss':'自身攻击未命中','dodge':'闪避对方攻击',
                       'damage_taken':'自身实际损失生命','damage_dealt':'造成实际生命伤害','healed':'自身受到治疗（含过量）',
@@ -55,8 +56,8 @@ class EffectEditor(QWidget):
             'relation':combo([('不限','any'),('自身','self'),('其他友军','ally'),('敌军','enemy')]),
             'unitType':combo([('不限','any'),('普通英雄','hero'),('召唤物','summon')]),
             'minAmount':number(0,0,10000000,0,100),'hpBelow':number(1,0,1,4,.05),
-            'requiredBuff':combo([('不要求',None)]+[(v,k) for k,v in BUFFS.items()]),
-            'absentBuff':combo([('不要求',None)]+[(v,k) for k,v in BUFFS.items()])}
+            'requiredBuff':combo([('不要求',None)]+[(v,k) for k,v in CONDITION_LABELS.items()]),
+            'absentBuff':combo([('不要求',None)]+[(v,k) for k,v in CONDITION_LABELS.items()])}
         self.maxlevel=integer(10,1,10)
         for label,field in [('本地 ID',self.id),('名称',self.name),('普通说明',self.description),('数值联动说明',self.rank),
                             ('准备',self.warmup),('冷却（沿用原版行动机会约定）',self.cooldown),

@@ -1,6 +1,6 @@
 # 游戏配置与离线协议快照
 
-来源：[BigOrange-001/lal-rebuild](https://github.com/BigOrange-001/lal-rebuild)，提交 `9f95b38d84bc98e11159d43669b1d54c0372e845`（[游戏 PR #21](https://github.com/BigOrange-001/lal-rebuild/pull/21)，待合并，以正式1.0.3 main 5b6bccd为基线）。GAME_VERSION 为1.0.3；编辑器版本独立维护，见 VERSION 与 editor/app.py。
+来源：[BigOrange-001/lal-rebuild](https://github.com/BigOrange-001/lal-rebuild)，提交 `824a4f5da27d224d6c55cacec8b4ea4b0b6ee57d`（[游戏 PR #21](https://github.com/BigOrange-001/lal-rebuild/pull/21)，待合并，以正式1.0.3 main 5b6bccd为基线）。GAME_VERSION 为1.0.3；编辑器版本独立维护，见 VERSION 与 editor/app.py。
 
 GAME_SOURCE.json记录共享Python模块、JSON配置和Schema的来源与SHA-256。离线编辑器通过共享的mod_authoring_103顺序投影1.0.3英雄、技能书、平衡、DOT和皮肤技能；数值快照为纯模块native_skill_snapshot，不包含战斗执行器。只复制依赖闭包内的55个文件；gateway、客户端执行资源和玩家数据库不包含在内。
 
