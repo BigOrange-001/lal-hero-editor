@@ -1,6 +1,6 @@
 {
   "repository": "https://github.com/BigOrange-001/lal-rebuild",
-  "commit": "824a4f5da27d224d6c55cacec8b4ea4b0b6ee57d",
+  "commit": "69085940c7b2b7ba718c267ba2f13b1ccf5e2c7a",
   "gameVersion": "1.0.3",
   "engineApi": "1",
   "files": {
@@ -36,12 +36,12 @@
     "server/hero_balance_103.py": "f0e2008ccc89fdf30da15a1ab8adf27799f23249b0642115f8902e936b7dc61a",
     "server/hero_skills_103.py": "06ec4de6d497551bf401564157ecc424877393f8fe8f1c5b4d0478d83c4e4d80",
     "server/mod_authoring_103.py": "13814042e119df4d0372c41d40def483c6701a0258aeac54406510ba0b10fb77",
-    "server/mod_compile.py": "3d69e9e2905f5988b1732fb5d8adfbb5a51ab4dd8b8b93886945936d4f7e400a",
-    "server/mod_effects.py": "71c3d1521d5e573550d9303d5c42487a02b19b71026ca1b5c6c32afee07f44b5",
-    "server/mod_native.py": "42eb5f2173cc4f8d358c7f1211fee385bd2561e9c99e59eb554f26b6aab8f55f",
+    "server/mod_compile.py": "619b40fb119f1371aee28eb08aa75059fc67b6e1ae8fb68f3e7608d91efb954f",
+    "server/mod_effects.py": "2e0f04386e187384f4e876d4911f7cd3fb5fe7a8f98601b9a6c58813b83cf860",
+    "server/mod_native.py": "111f7c56017368ef36de866b282ca3b5bdfd2d12c15068ec7318d1c9b0dc8594",
     "server/mod_packages.py": "6a3c437ae944e6d4ba152481b2ba218961c5427a3e0e778d584b53c8d0d6467b",
     "server/mod_policy.py": "14f40f588be632fa6e4ccadef2623172e32a67738e3034001712a92dc49adb5a",
-    "server/mod_schema.py": "39041262245c6ac420f63786e7528dedeccc0b265c299e74c176ec987c1b4df2",
+    "server/mod_schema.py": "d44b08adb02b44987b06b3d0fb807139a258bd3674e49c1021311a6d3bb77028",
     "server/native_ability_parameters.json": "9ea4f9fac14ea5a8c6c0e425a48e97e0734b169eb7d109e99fa9beb04f7e07d1",
     "server/native_skill_snapshot.py": "d6465b10771fb11b7a7c58b29799a5c409f3f6b5178d22a1fa98704425e450ba",
     "server/nurse_akali_103.py": "2508142bb0b50895e898d6cf48b5468c4226b3b0699b1dc6bf151321da47d366",
@@ -60,12 +60,12 @@
     "server/upstream_skill_priority.py": "f09114418933bca2a18f2262b1e61a9d19e4fb59464a4160cbb2f76d8c6af50b",
     "server/vip_campaign.py": "6ac24f75d88fa9acae6fcec89a855f2f149fcd573e6eb2c4856a853b905dc941"
   },
-  "note": "Offline authoring snapshot pinned to game PR #21, based on released game 1.0.3 main 5b6bccd. Pure hero/skill overlays and snapshot codec are included; no gateway or battle simulator is bundled.",
+  "note": "Offline authoring snapshot pinned to merged game PR #21, based on released game 1.0.3 main 5b6bccd. Pure hero/skill overlays and snapshot codec are included; no gateway or battle simulator is bundled.",
   "textNormalization": "LF; one inherited extra EOF blank line removed; hashes describe the vendored snapshot",
   "workingTreeChanges": false,
   "localExtension": {
     "name": "game-1.0.3-authoring-and-events",
-    "status": "game PR #21 pending merge; static checks only; no functional tests or packaging",
+    "status": "game PR #21 merged; review fixes synchronized; static checks only; no functional tests or packaging",
     "newCapabilities": [
       "skill.native-template.103",
       "skill.events.v1"
