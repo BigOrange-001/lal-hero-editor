@@ -1,19 +1,11 @@
 # 游戏配置与离线协议快照
 
-来源：[BigOrange-001/lal-rebuild](https://github.com/BigOrange-001/lal-rebuild)，提交 `8878da47c11fd7aa184f1d9f92cc145021f8c470`（[游戏 PR #18](https://github.com/BigOrange-001/lal-rebuild/pull/18)，已合并，以 PR #17 为基线）。游戏版本 1.0.2、引擎 API 1。编辑器版本独立维护，见 VERSION 与 editor/app.py；游戏版本见 GAME_VERSION。
+来源：[BigOrange-001/lal-rebuild](https://github.com/BigOrange-001/lal-rebuild)，提交 `9f95b38d84bc98e11159d43669b1d54c0372e845`（[游戏 PR #21](https://github.com/BigOrange-001/lal-rebuild/pull/21)，待合并，以正式1.0.3 main 5b6bccd为基线）。GAME_VERSION 为1.0.3；编辑器版本独立维护，见 VERSION 与 editor/app.py。
 
-GAME_SOURCE.json 记录共享 Python 模块、JSON 配置与公开 Schema 的来源和 SHA-256。这些文件按原路径保留，确保与游戏导入器使用相同的基线覆盖、摘要、资源规则和配置编译；24 个 Python 模块包括静态导入依赖。离线编辑器没有 gateway、网络监听入口、游戏存档或客户端执行文件。
+GAME_SOURCE.json记录共享Python模块、JSON配置和Schema的来源与SHA-256。离线编辑器通过共享的mod_authoring_103顺序投影1.0.3英雄、技能书、平衡、DOT和皮肤技能；数值快照为纯模块native_skill_snapshot，不包含战斗执行器。只复制依赖闭包内的55个文件；gateway、客户端执行资源和玩家数据库不包含在内。
 
-预览素材由原项目的 editor/resources 以及 assets/audio、assets/textures、assets/licenses 提供。SWF、字体运行包和 APK 未随工具源码复制。图集中的 ATF 只用于资源存在性与目录描述；可直接显示的英雄图标使用独立 PNG。
+编辑器的包扫描类型修复已被游戏PR #19与正式1.0.3吸收，本轮与游戏快照重新一致。新增skill.native-template.103和skill.events.v1的校验与编译代码、Schema与游戏PR #21同步；来源状态不把未合并分支记为main。文件统一使用LF，并去除player_store继承的额外EOF空行。
 
-同步协议时，从明确的游戏提交复制 GAME_SOURCE.json 中的文件，更新摘要并执行全技能模板与包往返核心检查。需要同步动作语义或派发逻辑的改动应先在游戏项目实现，编辑器不自行创造游戏接口。
+本轮按用户要求未运行功能测试或打包。已生成Schema，静态核对Python语法、共享内容、来源摘要和提取数值快照实现。新通用事件接口需要包含游戏PR #21的新版客户端，现有1.0.3正式APK和1.1.4编辑器发行版均不自动获得这些接口。
 
-1.1.4 包含合并审查修复：两类遗漏的动作引用参与重排／删除检查，锐雯两个取模基数不接受零值。只允许这次收紧范围前的已知旧协议摘要，且旧包仍按新范围检查，不自动放行未来不同协议。
-
-本次效果序列扩展新增 `server/mod_effects.py` 与对应 Schema，提供条件、混合治疗、自定义召唤物和实际数值说明。编辑器仅同步协议，不包含游戏战斗执行器。应先合并游戏 PR #18，再合并并发布本编辑器扩展；本轮按用户要求未执行自动化检查或新版 EXE 打包。用户已确认的人工验证范围详见接口说明。
-
-## PR #1 审查修复
-
-合包会重写效果序列的可选特效与召唤单位引用；英雄改名会原子更新召唤引用；效果技能提供本地 ID 编辑、32 步添加上限及手输资源引用的保存通知。
-
-共享模块 `server/mod_packages.py` 的目录扫描改为沿用作者声明的 `unitType`，避免合法召唤模板被错误登记为英雄。此处是对游戏主线快照的显式修正，未放宽导入校验；来源、摘要与尚待游戏端同步的差异记录在 GAME_SOURCE.json。游戏主线仍需同步这一扫描修复，本次仅合并编辑器。按用户要求未执行自动化测试或重新打包，已静态核对六项审查路径与引用处理。
+预览素材沿用原有内置资源，不加入个人美术。素材与第三方代码的权利范围见仓库README和许可证。

@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (QWidget,QVBoxLayout,QFormLayout,QHBoxLayout,QLine
     QTextEdit,QLabel,QPushButton,QSplitter,QScrollArea,QCheckBox)
 from .widgets import combo,integer,number,RefCombo
 from .skill_editor import ActionList
-from mod_effects import DEFAULTS, GROWTH_FIELDS
+from mod_effects import DEFAULTS, GROWTH_FIELDS, EVENTS
 from mod_schema import ModError
 
 OPERATIONS={'heal':'治疗（攻击＋自身生命）','damage':'伤害','buff':'施加状态／护盾',
@@ -17,11 +17,11 @@ OPERATIONS={'heal':'治疗（攻击＋自身生命）','damage':'伤害','buff':
 TARGETS={'self':'自身','all_allies':'全体友军','all_enemies':'全体敌人',
          'ally_radius':'自身本路半径内友军（含自己）','lane_lowest_hp':'本路最低生命百分比敌人',
          'lane_front':'本路最前方敌人','enemy_radius':'前序目标原位置附近敌人',
-         'previous':'复用前序目标'}
+         'event_source':'事件来源单位（按动作阵营过滤）','event_target':'事件目标单位（按动作阵营过滤）','previous':'复用前序目标'}
 BUFFS={'shield':'护盾','purify':'净化','strong':'攻击提升','weak':'虚弱',
-       'sunder':'破甲','steel':'双防提升','bless':'神佑','critup':'暴击',
+       'sunder':'破甲','steel':'双防提升','bless':'永久神佑','timed_bless':'限时神佑','curse':'诅咒','critup':'暴击',
        'toughup':'韧性','fleeup':'闪避','hitup':'精准／命中','stun':'眩晕'}
-FIELDS={'centerAction':'中心／锁定动作（从 0 起；-1 自身）','radius':'范围半径（本路）',
+FIELDS={'eventRatio':'事件实际数值倍率','overhealRatio':'事件过量治疗倍率','centerAction':'中心／锁定动作（从 0 起；-1 自身）','radius':'范围半径（本路）',
         'attackRatio':'攻击面板倍率','maxHpRatio':'自身最大生命倍率','amount':'增减益比例／固定属性',
         'buff':'状态','duration':'状态持续目标行动回合','distance':'击退距离／突进距离上限（0 不限）',
         'unit':'召唤单位','statRatio':'即时面板继承倍率','lifetime':'召唤物存续自身回合',
@@ -43,13 +43,28 @@ class EffectEditor(QWidget):
         self.id=QLineEdit();self.name=QLineEdit();self.description=QTextEdit();self.description.setMaximumHeight(80)
         self.rank=QTextEdit();self.rank.setMaximumHeight(110)
         self.rank.setToolTip('引用实际参数：{rank:动作索引:5} 攻击倍率，:6 自身生命倍率，:7 增减益比例；flat 显示固定值。升级和动作重排会同步。')
-        self.warmup=integer(0,0,100);self.cooldown=integer(1,1,100);self.reach=integer(3000,0,10000)
-        self.trigger=combo([('冷却就绪','ready'),('自身缺少指定状态时','absent_buff')])
+        self.warmup=integer(0,0,100);self.cooldown=integer(1,0,100);self.cooldown.setToolTip('事件被动允许 0；其他技能至少为 1。事件冷却按自身行动机会计数。');self.reach=integer(3000,0,10000)
+        self.trigger=combo([('冷却就绪','ready'),('自身缺少指定状态时','absent_buff'),('事件发生时（被动槽）','event')])
         self.trigger_buff=combo([(v,k) for k,v in BUFFS.items()],'purify')
+        event_labels={'turn_start':'自身回合开始','turn_end':'自身回合结束','basic_attack':'完成普攻（包括未命中）',
+                      'skill_cast':'完成主动施法','hit':'攻击命中','crit':'攻击暴击','miss':'自身攻击未命中','dodge':'闪避对方攻击',
+                      'damage_taken':'自身实际损失生命','damage_dealt':'造成实际生命伤害','healed':'自身受到治疗（含过量）',
+                      'heal_done':'为单位施加治疗（含过量）','kill':'最终击杀敌人','death':'自身最终死亡','shield_break':'自身护盾被击破'}
+        self.event_fields={'event':combo([(event_labels[k],k) for k in EVENTS]),
+            'maxPerRound':integer(1,1,16),'allowChain':QCheckBox('允许响应其他被动引发的事件（仍有安全上限）'),
+            'relation':combo([('不限','any'),('自身','self'),('其他友军','ally'),('敌军','enemy')]),
+            'unitType':combo([('不限','any'),('普通英雄','hero'),('召唤物','summon')]),
+            'minAmount':number(0,0,10000000,0,100),'hpBelow':number(1,0,1,4,.05),
+            'requiredBuff':combo([('不要求',None)]+[(v,k) for k,v in BUFFS.items()]),
+            'absentBuff':combo([('不要求',None)]+[(v,k) for k,v in BUFFS.items()])}
         self.maxlevel=integer(10,1,10)
         for label,field in [('本地 ID',self.id),('名称',self.name),('普通说明',self.description),('数值联动说明',self.rank),
                             ('准备',self.warmup),('冷却（沿用原版行动机会约定）',self.cooldown),
                             ('默认施放距离',self.reach),('触发条件',self.trigger),('检查状态',self.trigger_buff),('最高技能等级',self.maxlevel)]:form.addRow(label,field)
+        self.header_form=form
+        for key,label in [('event','触发事件'),('maxPerRound','每个全局回合最多触发'),('allowChain','被动连锁'),
+                          ('relation','关联单位阵营'),('unitType','关联单位类型'),('minAmount','最低事件实际值'),
+                          ('hpBelow','自身生命比例不高于'),('requiredBuff','自身必须持有'),('absentBuff','自身必须缺少')]:form.addRow(label,self.event_fields[key])
         layout.addLayout(form)
         buttons=QHBoxLayout()
         for text,callback in [('添加步骤',self.add),('删除步骤',self.remove),
@@ -64,7 +79,7 @@ class EffectEditor(QWidget):
         action_form.addRow('动作',self.kind);action_form.addRow('目标',self.target)
         self.fields={
             'centerAction':integer(-1,-1,31),'radius':number(0,0,10000,2,10),
-            'attackRatio':number(0,0,1000,6,.1),'maxHpRatio':number(0,0,1000,6,.01),
+            'eventRatio':number(0,0,1000,6,.1),'overhealRatio':number(0,0,1000,6,.1),'attackRatio':number(0,0,1000,6,.1),'maxHpRatio':number(0,0,1000,6,.01),
             'amount':number(0,0,100000,6,.1),'buff':combo([(v,k) for k,v in BUFFS.items()]),
             'duration':integer(1,1,100),'distance':number(0,0,10000,2,100),
             'unit':RefCombo(self.unit_refs()),'statRatio':number(1,.01,100,4,.1),
@@ -81,7 +96,7 @@ class EffectEditor(QWidget):
         self.preview=QLabel();self.preview.setWordWrap(True);layout.addWidget(self.preview)
         self.actions.currentRowChanged.connect(self.select)
         self.actions.moveRequested.connect(self.move_action)
-        for widget in [self.name,self.description,self.rank,self.warmup,self.cooldown,self.reach,self.trigger,self.trigger_buff,self.maxlevel,self.kind,self.target,*self.fields.values(),*self.growth.values()]:
+        for widget in [self.name,self.description,self.rank,self.warmup,self.cooldown,self.reach,self.trigger,self.trigger_buff,self.maxlevel,*self.event_fields.values(),self.kind,self.target,*self.fields.values(),*self.growth.values()]:
             if isinstance(widget,RefCombo):widget.currentTextChanged.connect(self.edit)
             elif hasattr(widget,'currentIndexChanged'):widget.currentIndexChanged.connect(self.edit)
             elif isinstance(widget,QTextEdit):widget.textChanged.connect(self.edit)
@@ -118,8 +133,10 @@ class EffectEditor(QWidget):
         self.id.setText(skill['id']);self.name.setText(skill['name']);self.description.setPlainText(skill['description']);self.rank.setPlainText(skill['rankInfoTemplate'])
         self.warmup.setValue(skill['warmup']);self.cooldown.setValue(skill['cooldown']);self.reach.setValue(skill['range']);self.maxlevel.setValue(skill['maxLevel'])
         self.trigger.setCurrentIndex(self.trigger.findData(skill['trigger']['kind']))
+        for key,widget in self.event_fields.items():
+            self.put(widget,skill['trigger'].get(key,{'event':EVENTS[0],'maxPerRound':1,'allowChain':False,'relation':'any','unitType':'any','minAmount':0,'hpBelow':1}.get(key)))
         self.trigger_buff.setCurrentIndex(self.trigger_buff.findData(skill['trigger'].get('buff','purify')))
-        self.rebuild();self.loading=False;self.actions.setCurrentRow(min(action_index,len(skill['actions'])-1));self.update_preview()
+        self.rebuild();self.loading=False;self.actions.setCurrentRow(min(action_index,len(skill['actions'])-1));self.update_fields();self.update_preview()
 
     def rebuild(self):
         self.actions.clear()
@@ -148,6 +165,9 @@ class EffectEditor(QWidget):
         if kind in ('push','move'):active.add('distance')
         if kind=='summon':active.update(('unit','statRatio','lifetime','maxAlive'))
         if kind=='damage':active.add('damageType')
+        event_mode=self.trigger.currentData()=='event'
+        if event_mode and (kind in ('heal','damage') or kind=='buff' and buff=='shield'):active.update(('eventRatio','overhealRatio'))
+        for widget in self.event_fields.values():self.header_form.setRowVisible(widget,event_mode)
         for key,widget in self.fields.items():self.action_form.setRowVisible(widget,key in active)
         for key,widget in self.growth.items():self.action_form.setRowVisible(widget,key in active)
         self.trigger_buff.setEnabled(self.trigger.currentData()=='absent_buff')
@@ -162,6 +182,8 @@ class EffectEditor(QWidget):
                           warmup=self.warmup.value(),cooldown=self.cooldown.value(),range=self.reach.value(),maxLevel=self.maxlevel.value(),
                           trigger={'kind':self.trigger.currentData()})
         if self.trigger.currentData()=='absent_buff':self.skill['trigger']['buff']=self.trigger_buff.currentData()
+        elif self.trigger.currentData()=='event':
+            self.skill['trigger'].update({k:self.get(w) for k,w in self.event_fields.items() if self.get(w) is not None})
         if 0<=self.selected<len(self.skill['actions']):
             a={key:self.get(widget) for key,widget in self.fields.items()}
             if a['unit']=='':a['unit']=None
@@ -186,7 +208,7 @@ class EffectEditor(QWidget):
     def update_preview(self,*_):
         if self.skill is None:return
         level=min(self.preview_level.value(),self.skill['maxLevel'])
-        inverse={4:'radius',5:'attackRatio',6:'maxHpRatio',7:'amount',9:'duration',10:'distance',12:'statRatio',13:'lifetime',14:'maxAlive'}
+        inverse={4:'radius',5:'attackRatio',6:'maxHpRatio',7:'amount',9:'duration',10:'distance',12:'statRatio',13:'lifetime',14:'maxAlive',18:'eventRatio',19:'overhealRatio'}
         def token(m):
             try:
                 a={**DEFAULTS,**self.skill['actions'][int(m[2])]};key=inverse[int(m[3])]
